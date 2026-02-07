@@ -147,3 +147,6 @@ LinkedIn OAuth2 credentials
 OpenRouter API key
 
 Active LinkedIn profile
+
+## 🖼️ Workflow Image
+<img width="1402" height="591" alt="Screenshot (3)" src="https://github.com/user-attachments/assets/2e2d56b8-7334-4030-8b11-28bd146fe478" />
