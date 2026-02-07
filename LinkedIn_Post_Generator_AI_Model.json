@@ -1,0 +1,569 @@
+{
+  "name": "LinkedIn_Post_Generator_AI_Model",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        -112
+      ],
+      "id": "af6e6732-7ea9-4725-882f-5d3d6461ec1e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo",
+          "mode": "list",
+          "cachedResultName": "LinkdinContent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1213728189,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo/edit#gid=1213728189"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        -112
+      ],
+      "id": "c5f27329-604c-4210-ab2b-4157c4304977",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TfXOhWIkO2frcNgK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create an engaging LinkedIn post based on these inputs:\n\nTopic: {{ ['Topic/Subject'] }}\nContent Type: {{ ['Content Type'] }}\nTone: {{ ['Tone'] }}\nTarget Audience: {{['Target Audience'] }}\nAdditional Notes: {{ ['Additional Notes'] }}\n\nRequirements:\n- Write a compelling LinkedIn post (150–300 words optimal)\n- Use short paragraphs (2–3 lines max) for readability\n- Include a strong hook in the first line\n- Add 3–5 relevant hashtags\n- Include a clear call-to-action that encourages comments\n- Match the specified tone exactly\n- Format specifically for LinkedIn (line breaks, no markdown)\n- Write one word image queries separated by commas\n\nReturn your response as valid JSON in the following structure only:\n\n{\n  \"post_content\": \"The full LinkedIn post text goes here...\",\n  \"hashtags\": [\"#Marketing\", \"#Leadership\", \"#AI\"],\n  \"character_count\": 285,\n  \"engagement_tip\": \"Best time to post: Tuesday–Thursday, 8–10 AM\",\n  \"call_to_action\": \"What's your experience with this? Share in the comments.\",\n  \"image_query\": \"AI, Computer, IT\"\n}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a LinkedIn content expert. Your task is to create engaging LinkedIn posts that match the specified tone, content type, and target audience. Write in a natural, conversational human voice. Avoid corporate jargon, buzzwords, and overly formal language. Use contractions and casual phrasing where appropriate. Vary sentence length and avoid repetitive sentence structures. Include light personal perspective or storytelling when relevant. Avoid clichés such as \"game-changer,\" \"leverage,\" \"synergy,\" \"circle back,\" or \"deep dive\". Do not use the character \"—\" anywhere. Return your response as valid JSON only, without markdown formatting."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        -112
+      ],
+      "id": "8b7dce5c-d272-420d-8aa5-bd521612f5ac",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-3.5-turbo",
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        848,
+        128
+      ],
+      "id": "7e0d5da9-f846-4e4f-8db2-799d683c0a97",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "NJxKt1M77m1NBvFF",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"post_content\": \"The main LinkedIn post text goes here with emojis naturally integrated...\",\n  \"hashtags\": [\"#Marketing\", \"#Leadership\", \"#AI\"],\n  \"character_count\": 285,\n  \"engagement_tip\": \"Best time to post: Tuesday-Thursday, 8-10 AM\",\n  \"call_to_action\": \"What's your experience with this? Share in the comments!\",\n  \"image_query\": \"A detailed DALL-E prompt for generating a professional LinkedIn post image\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        144
+      ],
+      "id": "1efd67b4-c0bf-4013-ac5d-c8a7044a2450",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.0-flash-001",
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        320
+      ],
+      "id": "d41d3c48-dd5a-437f-bf0f-231bc66a084e",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "NJxKt1M77m1NBvFF",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -112
+      ],
+      "id": "24be0b63-6ba5-4576-a895-e0631eeed17b",
+      "name": "Limit to One Post"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo",
+          "mode": "list",
+          "cachedResultName": "LinkdinContent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1213728189,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo/edit#gid=1213728189"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "Status": "In Progress"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Day",
+              "displayName": "Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Type",
+              "displayName": "Topic_Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Raw_Notes ",
+              "displayName": "Raw_Notes ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date_Published",
+              "displayName": "Date_Published",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        -112
+      ],
+      "id": "cb2ae0bd-7775-4b8c-b72a-6340b4b9ce96",
+      "name": "Update Post Status ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TfXOhWIkO2frcNgK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the AI output safely\n// If your Ai returns an array like in your example, we need to access the first item.\nlet aiData;\n\ntry {\n  //Check if the inputis already as object or need parsing \n  const inputData = $input.all()[0].json.output;\n   if (typeof inputData === \"string\") {\n    aiData = JSON.parse(inputData);\n  } else {\n    // If it's already an object, use it directly\n    aiData = inputData;\n  }\n\n  //Handsle nested output.output structure\n  if (aiData.output) {\n    aiData = aiData.output;\n  }\n} catch (error) \n{\nthrow new Error(\"Failed to parse AI output: \" + error.message);\n}\n\n// Extract fields components\nconst postContent = aiData.post_content || '';\nconst hashtags = aiData.hashtags || [];\nconst engagementTip = aiData.engagement_tip || '';\nconst callToAction = aiData.call_to_action || '';\nconst emojiSuggestions = aiData.emoji_suggestions || '';\n\n// Format hashtags as a single string\nconst hashtagString = hashtags.join('');\n\n// Create the final formatted post\n// Post content + blank line + hashtags\nconst finalPost = `${postContent}\\n\\n${hashtagString}`;\n\n// Calculate character counts\nconst characterCount = finalPost.length;\n\n//Calculate word count (bonus metric)\nconst wordCount = finalPost.trim().split(/\\s+/).length;\n\n//Check if post is within LinkedIn limits \nconst isWithinLimit = characterCount <= 3000;\nconst hasHashtags = hashtags.length >= 3;\n\n// Return formatted output\nreturn {\n  // the final post ready to publish\n  final_post: finalPost,\n      \n  // Original components (useful for display/editing)\n  post_content: postContent,\n  hashtags: hashtags,\n  hashtag_string: hashtagString,\n     \n  //Metadata\n  character_count: characterCount,\n  word_count: wordCount,\n  hashtag_count: hashtags.length,\n\n  //Qyality checks (for next node)\n  is_within_limit: isWithinLimit,\n  has_minimum_hashtags: hasHashtags,\n  passes_quality_check: isWithinLimit && hasHashtags,\n\n  //Additional info from AI\n  engagement_tip: engagementTip,\n  call_to_action: callToAction,\n  emoji_suggestions: emojiSuggestions,\n      \n  //Timestamp\n  generated_at: new Date().toISOString(),\n      \n  //Warning messages(if any)\n  warnings:  [\n    !isWithinLimit ? `Post exceeds 3000 characters \n(${characterCount} chars)`: null,\n    !hasHashtags ? `Post has fewer than 3 hashtags\n(${hashtags.length} found)`: null\n  ].filter(Boolean)\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        -112
+      ],
+      "id": "3eeb9d2c-0f33-4002-afdc-c3f2a27b4b64",
+      "name": "Post Formatter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9fea20e6-db47-41e6-bec6-ddeefdd44a43",
+              "leftValue": "={{ $json.passes_quality_check.toString() }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1472,
+        -112
+      ],
+      "id": "86005e68-dd87-4b33-bf90-fdf7a27bd101",
+      "name": "Validate Post Quality(if node)"
+    },
+    {
+      "parameters": {
+        "person": "8SYMENKUMe",
+        "text": "={{ $json.final_post }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -208
+      ],
+      "id": "bc0ce2ed-059f-4c0a-906f-f8bb898544ab",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "kaD7E4y78Rsmg9dI",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo",
+          "mode": "list",
+          "cachedResultName": "LinkdinContent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1213728189,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Megzz8dz-nx-oWkEM2Xb3Yhe__H61dpGUgnfP9glUuo/edit#gid=1213728189"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Update Post Status ').item.json.row_number }}",
+            "Status": "Posted"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Day",
+              "displayName": "Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Type",
+              "displayName": "Topic_Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Raw_Notes ",
+              "displayName": "Raw_Notes ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date_Published",
+              "displayName": "Date_Published",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1888,
+        -208
+      ],
+      "id": "6b074e58-98de-4eb9-925a-09d0747e9795",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TfXOhWIkO2frcNgK",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Limit to One Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Post Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to One Post": {
+      "main": [
+        [
+          {
+            "node": "Update Post Status ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Post Status ": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Formatter": {
+      "main": [
+        [
+          {
+            "node": "Validate Post Quality(if node)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Post Quality(if node)": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "e92287a3-b932-46a1-abf8-c5b1ea452b11",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fb89ba9d5dde1809cba46ddb3999610124e72de831a0f3dd9cbab4bd1f7a5ec1"
+  },
+  "id": "rH0tQMwszI1FfodL19f0y",
+  "tags": []
+}
